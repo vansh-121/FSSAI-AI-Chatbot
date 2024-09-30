@@ -61,8 +61,10 @@ def text_to_speech(text):
     # Show "Generating Audio..." message
     st.info("Generating Audio...")
 
-    # Remove any markdown formatting (like bold **, italics *, etc.)
+    # Remove any markdown formatting (like bold **, italics *, etc.) and URLs
     clean_text = re.sub(r'[*_~`]', '', text)
+    # Remove URLs using a regular expression
+    clean_text = re.sub(r'http\S+|www\S+|https\S+', '', clean_text, flags=re.MULTILINE)
 
     # Convert cleaned text to speech
     tts = gTTS(text=clean_text, lang='en')
@@ -73,6 +75,7 @@ def text_to_speech(text):
     st.success("Audio generated!")
 
     return temp_file_path
+
 
 # Input from user
 input = st.text_input("Ask a question:", key="input")
