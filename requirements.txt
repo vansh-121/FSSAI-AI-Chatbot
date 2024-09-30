@@ -1,6 +1,5 @@
 gTTS==2.5.3
-protobuf==5.28.2
+protobuf==4.25.4
 python-dotenv==1.0.1
 streamlit==1.38.0
 google-generativeai==0.7.2
-protobuf==4.25.4
