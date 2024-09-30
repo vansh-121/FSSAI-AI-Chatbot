@@ -18,17 +18,20 @@ chat = model.start_chat(history=[])
 
 # Function to get the Gemini response and aggregate streamed chunks
 def get_gemini_response(question):
-    # More detailed instructions to ensure responses cover FSSAI-related information
-    restricted_prompt = (
-        f"Respond to this question with information from the FSSAI (Food Safety and Standards Authority of India), "
-        f"its website (https://fssai.gov.in), or related data sources. If the question is related to food safety, food standards, "
-        f"licensing, regulations, or hygiene ratings in India, provide an FSSAI-based answer. "
-        f"If the question is not related to any of these topics, respond with: 'This question is outside the scope of FSSAI.' "
-        f"Here is the question: {question}"
+    # Comprehensive instructions to ensure full FSSAI-related coverage
+    optimized_prompt = (
+        f"Respond to this question by referencing the FSSAI (Food Safety and Standards Authority of India) website (https://fssai.gov.in) "
+        f"or any other FSSAI-approved data sources. Treat all queries related to food safety, hygiene, regulations, food standards, "
+        f"labeling, food inspections, food licensing, food businesses, and consumer safety in India as being within the FSSAI's scope, "
+        f"even if the acronym 'FSSAI' is not mentioned. Provide detailed information or direct the user to relevant sections of the FSSAI website. "
+        f"If no direct answer is available, give a general response about how FSSAI addresses such queries, and encourage the user to visit the website "
+        f"for more information. Here is the question: {question}"
     )
-    response_chunks = chat.send_message(restricted_prompt, stream=True)
+    response_chunks = chat.send_message(optimized_prompt, stream=True)
     full_response = "".join([chunk.text for chunk in response_chunks])
     return full_response
+
+
 
 # Initialize Streamlit app
 st.set_page_config(page_title="FSSAI AI Chatbot")
