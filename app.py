@@ -27,7 +27,7 @@ def get_gemini_response(question):
         f"If no direct answer is available, give a general response about how FSSAI addresses such queries, and encourage the user to visit the website "
         f"for more information. Here is the question: {question}"
     )
-    response_chunks = chat.send_message(optimized_prompt, stream=False)
+    response_chunks = chat.send_message(optimized_prompt, stream=True)
     full_response = "".join([chunk.text for chunk in response_chunks])
     return full_response
 
