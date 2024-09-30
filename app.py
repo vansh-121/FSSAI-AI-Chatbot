@@ -31,31 +31,6 @@ def get_gemini_response(question):
     full_response = "".join([chunk.text for chunk in response_chunks])
     return full_response
 
-
-
-# Initialize Streamlit app
-st.set_page_config(page_title="FSSAI AI Chatbot")
-
-st.header("FSSAI AI Chatbot")
-
-# Initialize session state for chat history and tracking the first question
-if 'chat_history' not in st.session_state:
-    st.session_state['chat_history'] = []
-if 'first_question' not in st.session_state:
-    st.session_state['first_question'] = True  # True means the first question has not been asked
-
-# Function to generate a response with the introduction on the first query
-def get_introduction_and_response(question):
-    # Add instruction for structured response and FSSAI introduction
-    intro_prompt = (
-        f"First, introduce yourself as FSSAI's Virtual AI Assistant. "
-        f"Then, respond to this question using only FSSAI-related information, its website (https://fssai.gov.in), "
-        f"or other official data sources. If the question is related to food safety, standards, licensing, or "
-        f"anything under FSSAI's domain, provide a relevant answer. If not, respond with: 'This question is outside the scope of FSSAI.' "
-        f"Here is the question: {question}"
-    )
-    return get_gemini_response(intro_prompt)
-
 def text_to_speech(text):
     """Converts text to speech and returns the path to the audio file."""
     # Show "Generating Audio..." message
@@ -77,9 +52,69 @@ def text_to_speech(text):
     return temp_file_path
 
 
-# Input from user
-input = st.text_input("Ask a question:", key="input")
-submit = st.button("Submit")
+# Initialize Streamlit app
+st.set_page_config(page_title="FSSAI AI Chatbot")
+
+st.header("FSSAI AI Chatbot")
+
+
+# Add the suggested questions section here
+
+
+# Now, the input field for the user to ask their own question
+input = st.text_input("Ask a question:", key="manual_input")
+submit = st.button("Submit", key="submit_button")
+
+
+st.subheader("Suggested Questions")
+suggested_questions = [
+    "What are the FSSAI regulations for food labeling?",
+    "How can I apply for a food business license?",
+    "What is the process for food inspection?",
+    "What are the safety standards for packaged food?"
+]
+
+
+for idx, question in enumerate(suggested_questions): 
+    if st.button(question, key=f"suggested_{idx}"):
+        input = question  # Set the input to the clicked suggested question
+        response = get_gemini_response(input)
+
+        # Add the suggested question and bot response to the chat history
+        st.session_state['chat_history'].append(("You", input))
+        st.session_state['chat_history'].append(("Bot", response))
+
+        # Display the response
+        st.markdown(f"**Bot:** {response}")
+
+        # Convert the response to speech and play the audio
+        audio_file_path = text_to_speech(response)
+        audio_file = open(audio_file_path, 'rb')
+        audio_bytes = audio_file.read()
+        st.audio(audio_bytes, format='audio/mp3')
+
+
+# Initialize session state for chat history and tracking the first question
+if 'chat_history' not in st.session_state:
+    st.session_state['chat_history'] = []
+if 'first_question' not in st.session_state:
+    st.session_state['first_question'] = True  # True means the first question has not been asked
+
+# Function to generate a response with the introduction on the first query
+def get_introduction_and_response(question):
+    # Add instruction for structured response and FSSAI introduction
+    intro_prompt = (
+        f"First, introduce yourself as FSSAI's Virtual AI Assistant. "
+        f"Then, respond to this question using only FSSAI-related information, its website (https://fssai.gov.in), "
+        f"or other official data sources. If the question is related to food safety, standards, licensing, or "
+        f"anything under FSSAI's domain, provide a relevant answer. If not, respond with: 'This question is outside the scope of FSSAI.' "
+        f"Here is the question: {question}"
+    )
+    return get_gemini_response(intro_prompt)
+
+
+
+
 
 # Process user input and generate response
 if submit and input:
