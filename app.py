@@ -4,6 +4,7 @@ import os
 import google.generativeai as genai
 from gtts import gTTS
 import tempfile
+import re
 
 # Load environment variables
 load_dotenv()
@@ -56,15 +57,18 @@ def text_to_speech(text):
     """Converts text to speech and returns the path to the audio file."""
     # Show "Generating Audio..." message
     st.info("Generating Audio...")
-    
-    # Convert text to speech
-    tts = gTTS(text=text, lang='en')
+
+    # Remove any markdown formatting (like bold **, italics *, etc.)
+    clean_text = re.sub(r'[*_~`]', '', text)
+
+    # Convert cleaned text to speech
+    tts = gTTS(text=clean_text, lang='en')
     temp_file_path = tempfile.NamedTemporaryFile(delete=False, suffix='.mp3').name
     tts.save(temp_file_path)
-    
+
     # Update the status to "Audio generated!"
     st.success("Audio generated!")
-    
+
     return temp_file_path
 
 # Input from user
