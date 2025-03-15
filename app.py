@@ -113,11 +113,6 @@ def get_introduction_and_response(question):
     return get_gemini_response(intro_prompt)
 
 
-available_models = genai.list_models()
-for model in available_models:
-    print(model.name)
-
-
 # Process user input and generate response
 if submit and input:
     # If it's the user's first question, include the introduction
