@@ -13,7 +13,7 @@ load_dotenv()
 genai.configure(api_key=os.getenv("GOOGLE_API_KEY"))
 
 # Load the Gemini Pro model
-model = genai.GenerativeModel("gemini-pro")
+model = genai.GenerativeModel("gemini-2.0-flash")
 chat = model.start_chat(history=[])
 
 # Function to get the Gemini response and aggregate streamed chunks
@@ -113,7 +113,9 @@ def get_introduction_and_response(question):
     return get_gemini_response(intro_prompt)
 
 
-
+available_models = genai.list_models()
+for model in available_models:
+    print(model.name)
 
 
 # Process user input and generate response
@@ -144,3 +146,4 @@ if submit and input:
 st.subheader("Chat History")
 for role, text in st.session_state['chat_history']:
     st.markdown(f"**{role}:** {text}")
+
